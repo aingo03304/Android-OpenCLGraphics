@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 add_subdirectory(libopencl-stub)
+add_subdirectory(csparse)
+
+find_library(
+        log-lib
+
+        log)
+
+find_library(
+        android-lib
+
+        android)
 
 add_library( # Sets the name of the library.
         native-lib
@@ -9,47 +20,26 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        native-lib.cpp)
-
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because CMake includes system libraries in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
-
-find_library( # Sets the name of the path variable.
-        log-lib
-
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log)
-
-find_library(
-        android-lib
-
-        android
-)
-
-find_library(
-        camera-lib
-
-        camera2ndk
-)
+        native-lib.cpp
+        )
 
 target_include_directories(
         native-lib
         PRIVATE
         libopencl-stub/include/
+        libopencl-stub/include/CL/
+        csparse/include/
         kernels/
 )
 
 target_link_libraries( # Specifies the target library.
         native-lib
-
         OpenCL
-
+        Csparse
         dl
-
+        log
+        mediandk
+        
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib}
